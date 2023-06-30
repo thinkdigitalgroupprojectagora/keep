@@ -6,10 +6,7 @@ import os
 import re
 from typing import Optional
 
-import google.auth
-
 from firebase_admin import firestore, initialize_app, credentials
-from firebase_admin.exceptions import FirebaseError
 
 from pydantic.dataclasses import dataclass
 
@@ -100,9 +97,11 @@ class FirestoreProvider(BaseProvider):
         fields = query.split('FETCH ')[1].split('.')
         ref_depth = len(fields)
 
-        print(collection)
-        print(document)
-        print(fields)
+        print('== FIRESTORE PROVIDER ============')
+        print(f'COLLECTION: {collection}', flush=True)
+        print(f'DOCUMENT: {document}', flush=True)
+        print(f'FIELDS: {fields}', flush=True)
+        print('==================================', flush=True)
         
         doc_ref = self.client.collection(collection).document(document).get()
         if doc_ref is None:
@@ -158,7 +157,7 @@ if __name__ == "__main__":
     )
 
     # Use the provider to execute a query
-    q = "keep-test-collection,ZCA0JbCdgyxkMEm8VvmG,test_field"
+    q = "FROM keep-test-collection.ZCA0JbCdgyxkMEm8VvmG FETCH test_field"
     results = provider.query(query=q)
 
     # Print the results
