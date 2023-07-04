@@ -59,8 +59,14 @@ class PubsubProvider(BaseProvider):
         topic_id = self.authentication_config.topic_id
         project_id = self.authentication_config.project_id
         message = kwargs.pop("message", "")
-        event_type = kwargs.pop("event_type_attr", "")
+        message_attr = kwargs.pop("message_attr", "")
+        attributes = {}
 
+        try:
+            attributes = json.loads(message_attr)
+        except Exception:
+            print("No attributes passed", flush=True)
+        
         if not message:
             raise ProviderException(
                 f"{self.__class__.__name__} Keyword Arguments Missing : 'message' keyword is needed to trigger PubSub message"
@@ -69,13 +75,14 @@ class PubsubProvider(BaseProvider):
         # actual pubsub intergration here
         data = json.dumps(message).encode('utf-8')
         publisher = pubsub_v1.PublisherClient()
-        publisher.publish(topic_id, data, event_type=event_type)
+        publisher.publish(topic_id, data, **attributes)
         
         self.logger.debug("Google PubSub triggered")
 
         print('== PUBSUB PROVIDER ===============')
         print(f'TOPIC ID: {topic_id}', flush=True)
         print(f'PROJECT ID: {project_id}', flush=True)
+        print(f'ATTRIBUTES: {attributes}', flush=True)
         print(f'MESSAGE: ', flush=True)
         print(json.loads(message), flush=True)
         print('==================================', flush=True)
@@ -89,9 +96,9 @@ if __name__ == "__main__":
     # Load environment variables
     import os
 
-    topic_id = "my-topic-id"
-    project_id = 'my-project-id-123'
-    message = "{'message': 'pubsub message}"
+    topic_id = "vasilis_test"
+    project_id = 'prj-d-moc-incidents-f998'
+    message = '{"message": "pubsub message"}'
 
     # Initalize the provider and provider config
     config = ProviderConfig(
