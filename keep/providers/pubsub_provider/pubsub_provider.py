@@ -73,7 +73,7 @@ class PubsubProvider(BaseProvider):
             )
         
         # actual pubsub intergration here
-        data = json.dumps(message).encode('utf-8')
+        data = message.encode('utf-8')
         publisher = pubsub_v1.PublisherClient()
         publisher.publish(topic_id, data, **attributes)
         
