@@ -6,7 +6,7 @@ import os
 import re
 from typing import Optional
 
-from firebase_admin import firestore, initialize_app, credentials
+from firebase_admin import firestore, initialize_app, credentials, delete_app
 
 from pydantic.dataclasses import dataclass
 
@@ -72,15 +72,20 @@ class FirestoreProvider(BaseProvider):
                 # If default project not found, raise error
                 raise ValueError("Firestore project id is missing.")
 
-    def init_client(self):
+    def create_firestore_app(self):
         cred = credentials.ApplicationDefault()
         
         # Use a service account
         firestore_app = initialize_app(cred,{
             'projectId': self.config.authentication['project_id']
         })
-        
-        self.client = firestore.client(app=firestore_app)
+        return firestore_app
+
+    def destroy_firestore_app(self, firestore_app):
+        delete_app(firestore_app)
+
+    def create_client(self, firestore_app):
+        return firestore.client(app=firestore_app)
 
     def dispose(self):
         pass # Nothing to dispose
@@ -89,7 +94,8 @@ class FirestoreProvider(BaseProvider):
         pass  # Define how to notify about any alerts or issues
 
     def _query(self, query: str):
-        self.init_client()
+        firestore_app = self.create_firestore_app()
+        client = self.create_client(firestore_app)
 
         collection_and_document = re.search('FROM (.*)FETCH ', query).group(1).split('.')
         collection = collection_and_document[0].strip()
@@ -103,7 +109,7 @@ class FirestoreProvider(BaseProvider):
         print(f'FIELDS: {fields}', flush=True)
         print('==================================', flush=True)
         
-        doc_ref = self.client.collection(collection).document(document).get()
+        doc_ref = client.collection(collection).document(document).get()
         if doc_ref is None:
             return results
         
@@ -122,6 +128,7 @@ class FirestoreProvider(BaseProvider):
         elif ref_depth == 5:
             results = firestore_document[fields[0]][fields[1]][fields[2]][fields[3]][fields[4]]
 
+        self.destroy_firestore_app(firestore_app)
         return results
 
     def get_alerts(self, alert_id: Optional[str] = None):
