@@ -115,4 +115,7 @@ class HttpProvider(BaseProvider):
             body = response.text
 
         result["body"] = body
+        print('== HTTP PROVIDER =================', flush=True)
+        print(result, flush=True)
+        print("==================================", flush=True)
         return result
