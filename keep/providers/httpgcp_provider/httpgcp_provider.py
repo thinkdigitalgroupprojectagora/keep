@@ -73,6 +73,7 @@ class HttpgcpProvider(BaseProvider):
         # Use Google's Metadata Server
         is_local_environment = os.environ.get("X_PA_GCP_JWT", None)
         if is_local_environment is None:
+            print("Requesting token from Metadata Server...", flush=True)
             # Set up metadata server request
             # See https://cloud.google.com/compute/docs/instances/verifying-instance-identity#request_signature
             metadata_server_token_url = 'http://metadata/computeMetadata/v1/instance/service-accounts/default/identity?audience='
@@ -84,7 +85,9 @@ class HttpgcpProvider(BaseProvider):
             token_response = requests.get(token_request_url, headers=token_request_headers)
             jwt = token_response.content.decode("utf-8")
             headers['Authorization'] = f'Bearer {jwt}'
+            print(f"Token generated: {jwt}", flush=True)
         else:
+            print(f"X_PA_GCP_JWT env variable found, metadata connection skipped!", flush=True)
             headers['Authorization'] = f'Bearer {is_local_environment}'
 
         if method == "GET":
@@ -114,7 +117,7 @@ class HttpgcpProvider(BaseProvider):
             body = response.text
 
         result["body"] = body
-        print('== HTTP PROVIDER ===============================', flush=True)
+        print('== HTTP GCP PROVIDER ===============================', flush=True)
         print({
                 "url": url,
                 "method": method,
