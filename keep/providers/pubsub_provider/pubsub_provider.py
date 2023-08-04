@@ -83,9 +83,9 @@ class PubsubProvider(BaseProvider):
             print("Exctracting substitutes failed OR None added", flush=True)
         
         for sub_param_key in parameters_to_change.keys():
-            if sub_param_key in message.keys():
-                sub_value = parameters_to_change[sub_param_key]
-                message[sub_param_key] = sub_value
+            # if sub_param_key in message.keys():
+            sub_value = parameters_to_change[sub_param_key]
+            message[sub_param_key] = sub_value
 
         # manipulating message parameters (field addition)
         try:
