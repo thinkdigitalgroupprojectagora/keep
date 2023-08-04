@@ -44,6 +44,10 @@ def timestamp_now() -> datetime.datetime:
     dt = datetime.datetime.timestamp(datetime.datetime.now())
     return dt
 
+def date_today() -> datetime.datetime:
+    today = datetime.date.today()
+    dt = today.strftime("%Y-%m-%d")
+    return dt
 
 def to_utc(dt: datetime.datetime | str) -> datetime.datetime:
     if isinstance(dt, str):
