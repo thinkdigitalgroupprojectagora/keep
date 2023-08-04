@@ -40,6 +40,10 @@ def utcnow() -> datetime.datetime:
     dt = datetime.datetime.now(datetime.timezone.utc)
     return dt
 
+def timestamp_now() -> datetime.datetime:
+    dt = datetime.datetime.timestamp(datetime.datetime.now())
+    return dt
+
 
 def to_utc(dt: datetime.datetime | str) -> datetime.datetime:
     if isinstance(dt, str):

@@ -93,9 +93,13 @@ class PubsubProvider(BaseProvider):
         except Exception:
             print("Extracting additional params failed OR None added", flush=True)
         
+        json_params = {}
         for add_param_key in parameters_to_add.keys():
             add_value = parameters_to_add[add_param_key]
-            message[add_param_key] = add_value
+            json_params[add_param_key] = add_value
+
+        if json_params is not {}:
+            message['params'] = json_params
 
         if not message:
             raise ProviderException(
