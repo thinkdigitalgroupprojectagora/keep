@@ -40,6 +40,7 @@ def utcnow() -> datetime.datetime:
     dt = datetime.datetime.now(datetime.timezone.utc)
     return dt
 
+## BEGIN CUSTOM KEEP FUNCTIONS
 def timestamp_now() -> datetime.datetime:
     dt = datetime.datetime.timestamp(datetime.datetime.now())
     return dt
@@ -48,6 +49,12 @@ def date_today() -> datetime.datetime:
     today = datetime.date.today()
     dt = today.strftime("%Y-%m-%d")
     return dt
+
+def uuid_gen() -> str:
+    import uuid
+    uid = str(uuid.uuid4())
+    return uid
+## END CUSTOM KEEP FUNCTIONS
 
 def to_utc(dt: datetime.datetime | str) -> datetime.datetime:
     if isinstance(dt, str):
