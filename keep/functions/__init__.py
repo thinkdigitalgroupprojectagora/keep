@@ -46,9 +46,12 @@ def timestamp_now() -> datetime.datetime:
     return dt
 
 def date_today() -> datetime.datetime:
-    today = datetime.date.today()
-    dt = today.strftime("%Y-%m-%d")
-    return dt
+    # today = datetime.date.today()
+    # dt = today.strftime("%Y-%m-%d")
+    
+    now = datetime.datetime.now()
+    ts = datetime.datetime.timestamp(now)
+    return ts
 
 def uuid_gen() -> str:
     import uuid
