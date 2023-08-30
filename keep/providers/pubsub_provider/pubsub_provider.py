@@ -109,7 +109,10 @@ class PubsubProvider(BaseProvider):
         # actual pubsub intergration here
         data = json.dumps(message).encode('utf-8')
         publisher = pubsub_v1.PublisherClient()
-        publisher.publish(topic_id, data, **attributes)
+        kwargs = dict.copy(attributes)
+        kwargs['topic'] = topic_id
+        kwargs['data'] = data
+        publisher.publish(**kwargs)
         
         self.logger.debug("Google PubSub triggered")
 
@@ -139,6 +142,7 @@ if __name__ == "__main__":
     topic_id = "vasilis_test"
     project_id = 'prj-d-moc-incidents-f998'
     message = '{"message": "pubsub message"}'
+    attr = '{"event_type": "INCIDENT_POLICY_HEARTBEAT"}'
 
     # Initalize the provider and provider config
     config = ProviderConfig(
@@ -148,5 +152,6 @@ if __name__ == "__main__":
     provider = PubsubProvider(provider_id="pubsub-test", config=config)
 
     provider.notify(
-        message=message
+        message=message,
+        message_attr=attr
     )
