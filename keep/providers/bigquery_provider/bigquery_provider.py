@@ -98,6 +98,12 @@ class BigqueryProvider(BaseProvider):
         self.init_client()
         query_job = self.client.query(query)
         results = list(query_job.result())
+        
+        print("=== BQ Provider ===============", flush=True)
+        print("Results:", flush=True)
+        print(results, flush=True)
+        print("===============================", flush=True)
+
         return results
 
     def get_alerts(self, alert_id: Optional[str] = None):
